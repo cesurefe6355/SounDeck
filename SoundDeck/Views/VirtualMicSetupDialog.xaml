@@ -1,0 +1,236 @@
+<Window x:Class="SoundDeck.Views.VirtualMicSetupDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Sanal Mikrofon Kurulumu"
+        Width="580"
+        SizeToContent="Height"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False"
+        Background="{StaticResource WindowBackgroundBrush}">
+
+    <Window.Resources>
+        <Style x:Key="StepNumber" TargetType="{x:Type Border}">
+            <Setter Property="Width" Value="22" />
+            <Setter Property="Height" Value="22" />
+            <Setter Property="Background" Value="{StaticResource AccentSoftBrush}" />
+            <Setter Property="CornerRadius" Value="11" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+        </Style>
+        <Style x:Key="StepText" TargetType="{x:Type TextBlock}">
+            <Setter Property="Margin" Value="10,1,0,0" />
+            <Setter Property="FontSize" Value="11.5" />
+            <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <Border Width="40"
+                    Height="40"
+                    Background="{StaticResource AccentSoftBrush}"
+                    CornerRadius="10">
+                <TextBlock HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontFamily="{StaticResource IconFont}"
+                           FontSize="18"
+                           Foreground="{StaticResource AccentHoverBrush}"
+                           Text="&#xE720;" />
+            </Border>
+            <StackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                <TextBlock FontSize="18" FontWeight="SemiBold" Text="Sanal Mikrofon Kurulumu" />
+                <TextBlock Margin="0,2,0,0"
+                           FontSize="11"
+                           Foreground="{StaticResource TextSecondaryBrush}"
+                           Text="SteelSeries Sonar'a alternatif, hafif VB-CABLE kurulumu." />
+            </StackPanel>
+        </StackPanel>
+
+        <Border Grid.Row="1"
+                Margin="0,20,0,0"
+                Padding="14,12"
+                Background="{StaticResource SurfaceAltBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="9">
+            <StackPanel>
+                <TextBlock Margin="0,0,0,10"
+                           FontSize="10"
+                           FontWeight="Bold"
+                           Foreground="{StaticResource TextMutedBrush}"
+                           Text="SÜRÜCÜ DURUMU" />
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock x:Name="CableInputStatusIcon"
+                               Width="18"
+                               VerticalAlignment="Center"
+                               FontFamily="{StaticResource IconFont}"
+                               FontSize="12"
+                               Text="&#xE7BA;" />
+                    <TextBlock x:Name="CableInputStatusText"
+                               Margin="7,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="11.5"
+                               Text="CABLE Input kontrol ediliyor..." />
+                </StackPanel>
+                <StackPanel Margin="0,7,0,0" Orientation="Horizontal">
+                    <TextBlock x:Name="CableOutputStatusIcon"
+                               Width="18"
+                               VerticalAlignment="Center"
+                               FontFamily="{StaticResource IconFont}"
+                               FontSize="12"
+                               Text="&#xE7BA;" />
+                    <TextBlock x:Name="CableOutputStatusText"
+                               Margin="7,0,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="11.5"
+                               Text="CABLE Output kontrol ediliyor..." />
+                </StackPanel>
+                <TextBlock x:Name="InstallStatusText"
+                           Margin="0,11,0,0"
+                           FontSize="11"
+                           Foreground="{StaticResource TextSecondaryBrush}"
+                           TextWrapping="Wrap" />
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="2"
+                Margin="0,14,0,0"
+                Padding="14,12"
+                Background="{StaticResource SurfaceAltBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="9">
+            <StackPanel>
+                <TextBlock Margin="0,0,0,10"
+                           FontSize="10"
+                           FontWeight="Bold"
+                           Foreground="{StaticResource TextMutedBrush}"
+                           Text="KURULUM ADIMLARI" />
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Border Style="{StaticResource StepNumber}">
+                        <TextBlock HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   FontSize="10"
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource AccentHoverBrush}"
+                                   Text="1" />
+                    </Border>
+                    <TextBlock Grid.Column="1"
+                               Style="{StaticResource StepText}"
+                               Text="VB-CABLE'i indirip yönetici olarak kurun. Kurulumdan sonra gerekirse bilgisayarı yeniden başlatın." />
+                </Grid>
+
+                <Grid Margin="0,9,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Border Style="{StaticResource StepNumber}">
+                        <TextBlock HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   FontSize="10"
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource AccentHoverBrush}"
+                                   Text="2" />
+                    </Border>
+                    <TextBlock Grid.Column="1"
+                               Style="{StaticResource StepText}"
+                               Text="SoundDeck'te Yenile'ye basın. B çıkışı otomatik olarak CABLE Input (bazı kurulumlarda CABLE In 16ch) seçilir." />
+                </Grid>
+
+                <Grid Margin="0,9,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Border Style="{StaticResource StepNumber}">
+                        <TextBlock HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   FontSize="10"
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource AccentHoverBrush}"
+                                   Text="3" />
+                    </Border>
+                    <TextBlock Grid.Column="1"
+                               Style="{StaticResource StepText}"
+                               Text="Discord / OBS mikrofon ayarında CABLE Output seçin. Monitör (A) çıkışınız kulaklığınızda kalabilir." />
+                </Grid>
+
+                <Grid Margin="0,9,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Border Style="{StaticResource StepNumber}">
+                        <TextBlock HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   FontSize="10"
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource AccentHoverBrush}"
+                                   Text="4" />
+                    </Border>
+                    <TextBlock Grid.Column="1"
+                               Style="{StaticResource StepText}"
+                               Text="SoundDeck'te Mikrofon satırından mikrofonunuzu seçin. Anahtar açıksa SoundDeck sesinizi otomatik olarak B çıkışına karıştırır; ayrıca Windows 'Dinle' ayarı gerekmez." />
+                </Grid>
+
+                <Grid Margin="0,9,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Border Style="{StaticResource StepNumber}">
+                        <TextBlock HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   FontSize="10"
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource AccentHoverBrush}"
+                                   Text="5" />
+                    </Border>
+                    <TextBlock Grid.Column="1"
+                               Style="{StaticResource StepText}"
+                               Text="Sonar'ı kullanmayacaksanız SteelSeries GG / Sonar'ı kapatın veya başlangıçtan kaldırın. Böylece oyunlarda FPS düşüşü yaşanmaz." />
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <TextBlock Grid.Row="3"
+                   Margin="2,12,2,0"
+                   FontSize="10"
+                   Foreground="{StaticResource TextMutedBrush}"
+                   Text="Not: Windows'ta sanal mikrofon oluşturmak imzalı bir ses sürücüsü gerektirir. VB-CABLE bu iş için hafif ve imzalı bir çözümdür; SoundDeck kendi kernel sürücüsünü kuramaz. Daha önce Windows'ta 'Bu cihazı dinle' ayarını açtıysanız çift sesi önlemek için kapatın; SoundDeck mikrofonu otomatik karıştırır."
+                   TextWrapping="Wrap" />
+
+        <StackPanel Grid.Row="4"
+                    Margin="0,18,0,0"
+                    HorizontalAlignment="Right"
+                    Orientation="Horizontal">
+            <Button Margin="0,0,10,0"
+                    Click="OpenDownload_Click"
+                    Content="İndirme sayfasını aç"
+                    Style="{StaticResource PrimaryButton}" />
+            <Button Margin="0,0,10,0"
+                    Click="Refresh_Click"
+                    Content="Yenile"
+                    Style="{StaticResource SecondaryButton}" />
+            <Button Click="Close_Click"
+                    Content="Kapat"
+                    IsCancel="True"
+                    Style="{StaticResource SecondaryButton}" />
+        </StackPanel>
+    </Grid>
+</Window>

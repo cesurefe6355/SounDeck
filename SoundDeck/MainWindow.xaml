@@ -1,0 +1,904 @@
+<Window x:Class="SoundDeck.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="SoundDeck"
+        Width="1220"
+        Height="780"
+        MinWidth="960"
+        MinHeight="600"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource WindowBackgroundBrush}"
+        AllowDrop="True"
+        Activated="Window_Activated"
+        Closing="Window_Closing"
+        DragOver="Window_DragOver"
+        Drop="Window_Drop"
+        PreviewKeyDown="Window_PreviewKeyDown">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Üst başlık ve ana eylemler -->
+        <Border Grid.Row="0"
+                Padding="24,14"
+                Background="{StaticResource SurfaceBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="0,0,0,1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Border Width="42"
+                            Height="42"
+                            Background="{StaticResource AccentBrush}"
+                            CornerRadius="11">
+                        <TextBlock HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   FontFamily="{StaticResource IconFont}"
+                                   FontSize="18"
+                                   Foreground="{StaticResource WhiteBrush}"
+                                   Text="&#xE8D6;" />
+                    </Border>
+                    <StackPanel Margin="13,0,0,0" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock FontSize="20" FontWeight="Bold" Text="SoundDeck" VerticalAlignment="Center" />
+                            <Border Margin="10,0,0,0"
+                                    Padding="7,2"
+                                    Background="{StaticResource SurfaceAltBrush}"
+                                    BorderBrush="{StaticResource BorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="5"
+                                    VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Ellipse Width="6" Height="6" Fill="{StaticResource SuccessBrush}" Margin="0,0,5,0" VerticalAlignment="Center" />
+                                    <TextBlock FontSize="9.5" FontWeight="SemiBold" Foreground="{StaticResource SuccessBrush}" Text="HAZIR" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                        <TextBlock Margin="0,2,0,0"
+                                   FontSize="11"
+                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                   Text="Ses panosu ve canlı yayın mikseri" />
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal">
+                    <Button Margin="0,0,8,0"
+                            Padding="14,8"
+                            Click="AddFiles_Click"
+                            Style="{StaticResource PrimaryButton}"
+                            ToolTip="Bilgisayardan bir veya birden fazla ses dosyası ekle">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Margin="0,0,7,0"
+                                       VerticalAlignment="Center"
+                                       FontFamily="{StaticResource IconFont}"
+                                       FontSize="13"
+                                       Text="&#xE710;" />
+                            <TextBlock VerticalAlignment="Center" FontSize="12" Text="Dosya Ekle" />
+                        </StackPanel>
+                    </Button>
+
+                    <Button Margin="0,0,8,0"
+                            Padding="13,8"
+                            Click="ScanFolder_Click"
+                            Style="{StaticResource SecondaryButton}"
+                            ToolTip="Bir klasördeki tüm desteklenen sesleri tara">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Margin="0,0,7,0"
+                                       VerticalAlignment="Center"
+                                       FontFamily="{StaticResource IconFont}"
+                                       FontSize="13"
+                                       Text="&#xE8B7;" />
+                            <TextBlock VerticalAlignment="Center" FontSize="12" Text="Klasör Tara" />
+                        </StackPanel>
+                    </Button>
+
+                    <Button Padding="13,8"
+                            Click="StopAll_Click"
+                            Style="{StaticResource DangerButton}"
+                            ToolTip="Çalan tüm sesleri hemen durdur">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Margin="0,0,7,0"
+                                       VerticalAlignment="Center"
+                                       FontFamily="{StaticResource IconFont}"
+                                       FontSize="12"
+                                       Text="&#xE71A;" />
+                            <TextBlock VerticalAlignment="Center" FontSize="12" Text="Tümünü Durdur" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Ses Yönlendirme ve Mikser Paneli (3 Kanal Kartı) -->
+        <Border Grid.Row="1"
+                Padding="24,12,24,14"
+                Background="{StaticResource SurfaceAltBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="0,0,0,1">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!-- Üst Başlık ve Hızlı Eylemler -->
+                <Grid Grid.Row="0" Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                        <TextBlock FontFamily="{StaticResource IconFont}"
+                                   FontSize="12"
+                                   Foreground="{StaticResource AccentHoverBrush}"
+                                   VerticalAlignment="Center"
+                                   Text="&#xE7F6;" />
+                        <TextBlock Margin="8,0,0,0"
+                                   FontSize="10"
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                   VerticalAlignment="Center"
+                                   Text="SES ÇIKIŞLARI VE YAYIN KANALLARI (MİKSER)" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1"
+                                VerticalAlignment="Center"
+                                Orientation="Horizontal">
+                        <Button Margin="0,0,8,0"
+                                Padding="10,6"
+                                Click="OpenVirtualMicSetup_Click"
+                                Style="{StaticResource PrimaryButton}"
+                                ToolTip="VB-CABLE ile hafif sanal mikrofon kurulumu"
+                                Visibility="{Binding NeedsVirtualMicSetup, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Margin="0,0,6,0"
+                                           VerticalAlignment="Center"
+                                           FontFamily="{StaticResource IconFont}"
+                                           FontSize="11"
+                                           Text="&#xE896;" />
+                                <TextBlock VerticalAlignment="Center"
+                                           FontSize="11"
+                                           Text="Sanal mikrofon kur" />
+                            </StackPanel>
+                        </Button>
+                        <Button Margin="0,0,8,0"
+                                Padding="10,6"
+                                Command="{Binding UseSuggestedBroadcastDeviceCommand}"
+                                Style="{StaticResource PrimaryButton}"
+                                ToolTip="Algılanan sanal mikrofon çıkışını B olarak ayarla"
+                                Visibility="{Binding HasVirtualDeviceSuggestion, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Margin="0,0,6,0"
+                                           VerticalAlignment="Center"
+                                           FontFamily="{StaticResource IconFont}"
+                                           FontSize="11"
+                                           Text="&#xE720;" />
+                                <TextBlock VerticalAlignment="Center"
+                                           FontSize="11"
+                                           Text="Sanal mikrofonu seç" />
+                            </StackPanel>
+                        </Button>
+                        <Button VerticalAlignment="Center"
+                                Width="32"
+                                Height="32"
+                                Click="RefreshDevices_Click"
+                                Style="{StaticResource IconButton}"
+                                ToolTip="Ses çıkış ve giriş cihazlarını yenile">
+                            <TextBlock FontFamily="{StaticResource IconFont}"
+                                       FontSize="13"
+                                       Text="&#xE72C;" />
+                        </Button>
+                    </StackPanel>
+                </Grid>
+
+                <!-- 3 Kanal Kartı -->
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="14" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="14" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Kanal 1: Monitör Çıkışı (A) -->
+                    <Border Grid.Column="0"
+                            Padding="14,12"
+                            Background="{StaticResource CardBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="10">
+                        <StackPanel>
+                            <Grid Margin="0,0,0,10">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Border Width="28"
+                                            Height="28"
+                                            Background="{StaticResource AccentSoftBrush}"
+                                            CornerRadius="7">
+                                        <TextBlock HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"
+                                                   FontFamily="{StaticResource IconFont}"
+                                                   FontSize="13"
+                                                   Foreground="{StaticResource AccentHoverBrush}"
+                                                   Text="&#xE7F6;" />
+                                    </Border>
+                                    <StackPanel Margin="9,0,0,0" VerticalAlignment="Center">
+                                        <TextBlock FontSize="11"
+                                                   FontWeight="Bold"
+                                                   Text="MONİTÖR (KULAKLIK / A)" />
+                                        <TextBlock FontSize="9"
+                                                   Foreground="{StaticResource TextMutedBrush}"
+                                                   Text="Kendi duyduğunuz ses" />
+                                    </StackPanel>
+                                </StackPanel>
+                                <ToggleButton HorizontalAlignment="Right"
+                                              VerticalAlignment="Center"
+                                              IsChecked="{Binding IsMonitorEnabled, Mode=TwoWay}"
+                                              Style="{StaticResource SwitchToggle}"
+                                              ToolTip="Kulaklık monitör çıkışını aç / kapat" />
+                            </Grid>
+
+                            <ComboBox HorizontalAlignment="Stretch"
+                                      Height="34"
+                                      DisplayMemberPath="DisplayName"
+                                      ItemsSource="{Binding OutputDevices}"
+                                      SelectedItem="{Binding SelectedMonitorDevice, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                      ToolTip="{Binding SelectedMonitorDevice.DisplayName}" />
+
+                            <TextBlock Margin="2,6,0,0"
+                                       FontSize="10"
+                                       Foreground="{StaticResource TextMutedBrush}"
+                                       Text="Sesler kulaklığınıza iletilir." />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Kanal 2: Yayın / Sanal Mikrofon (B) -->
+                    <Border Grid.Column="2"
+                            Padding="14,12"
+                            Background="{StaticResource CardBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="10">
+                        <StackPanel>
+                            <Grid Margin="0,0,0,10">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Border Width="28"
+                                            Height="28"
+                                            Background="{StaticResource AccentSoftBrush}"
+                                            CornerRadius="7">
+                                        <TextBlock HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"
+                                                   FontFamily="{StaticResource IconFont}"
+                                                   FontSize="13"
+                                                   Foreground="{StaticResource AccentHoverBrush}"
+                                                   Text="&#xE93E;" />
+                                    </Border>
+                                    <StackPanel Margin="9,0,0,0" VerticalAlignment="Center">
+                                        <TextBlock FontSize="11"
+                                                   FontWeight="Bold"
+                                                   Text="YAYIN / SANAL MİK. (B)" />
+                                        <TextBlock FontSize="9"
+                                                   Foreground="{StaticResource TextMutedBrush}"
+                                                   Text="Discord, OBS veya oyun çıkışı" />
+                                    </StackPanel>
+                                </StackPanel>
+                                <ToggleButton HorizontalAlignment="Right"
+                                              VerticalAlignment="Center"
+                                              IsChecked="{Binding IsBroadcastEnabled, Mode=TwoWay}"
+                                              Style="{StaticResource SwitchToggle}"
+                                              ToolTip="Yayın / sanal mikrofon çıkışını aç / kapat" />
+                            </Grid>
+
+                            <ComboBox HorizontalAlignment="Stretch"
+                                      Height="34"
+                                      DisplayMemberPath="DisplayName"
+                                      ItemsSource="{Binding OutputDevices}"
+                                      SelectedItem="{Binding SelectedBroadcastDevice, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                      ToolTip="{Binding SelectedBroadcastDevice.DisplayName}" />
+
+                            <TextBlock Margin="2,6,0,0"
+                                       FontSize="10"
+                                       Text="{Binding OutputRoutingMessage}"
+                                       TextTrimming="CharacterEllipsis"
+                                       ToolTip="{Binding OutputRoutingMessage}">
+                                <TextBlock.Style>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding HasOutputRoutingWarning}" Value="True">
+                                                <Setter Property="Foreground" Value="{StaticResource WarningBrush}" />
+                                                <Setter Property="FontWeight" Value="SemiBold" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Kanal 3: Mikrofon (Sesli Sohbet) -->
+                    <Border Grid.Column="4"
+                            Padding="14,12"
+                            Background="{StaticResource CardBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="10">
+                        <StackPanel>
+                            <Grid Margin="0,0,0,10">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Border Width="28"
+                                            Height="28"
+                                            Background="{StaticResource AccentSoftBrush}"
+                                            CornerRadius="7">
+                                        <TextBlock HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"
+                                                   FontFamily="{StaticResource IconFont}"
+                                                   FontSize="13"
+                                                   Foreground="{StaticResource AccentHoverBrush}"
+                                                   Text="&#xE720;" />
+                                    </Border>
+                                    <StackPanel Margin="9,0,0,0" VerticalAlignment="Center">
+                                        <TextBlock FontSize="11"
+                                                   FontWeight="Bold"
+                                                   Text="MİKROFON (SESLİ SOHBET)" />
+                                        <TextBlock FontSize="9"
+                                                   Foreground="{StaticResource TextMutedBrush}"
+                                                   Text="B kanalına otomatik karıştırma" />
+                                    </StackPanel>
+                                </StackPanel>
+                                <ToggleButton HorizontalAlignment="Right"
+                                              VerticalAlignment="Center"
+                                              IsChecked="{Binding IsMicrophoneEnabled, Mode=TwoWay}"
+                                              Style="{StaticResource SwitchToggle}"
+                                              ToolTip="Mikrofonu yayına otomatik karıştırmayı aç / kapat" />
+                            </Grid>
+
+                            <ComboBox HorizontalAlignment="Stretch"
+                                      Height="34"
+                                      DisplayMemberPath="DisplayName"
+                                      ItemsSource="{Binding CaptureDevices}"
+                                      SelectedItem="{Binding SelectedMicrophoneDevice, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                      ToolTip="{Binding SelectedMicrophoneDevice.DisplayName}" />
+
+                            <Grid Margin="2,6,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Column="0"
+                                           VerticalAlignment="Center"
+                                           FontSize="10"
+                                           Text="{Binding MicrophoneRoutingMessage}"
+                                           TextTrimming="CharacterEllipsis"
+                                           ToolTip="{Binding MicrophoneRoutingMessage}">
+                                    <TextBlock.Style>
+                                        <Style TargetType="{x:Type TextBlock}">
+                                            <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding HasMicrophoneRoutingWarning}" Value="True">
+                                                    <Setter Property="Foreground" Value="{StaticResource DangerBrush}" />
+                                                    <Setter Property="FontWeight" Value="SemiBold" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+
+                                <Button Grid.Column="1"
+                                        Margin="6,0,0,0"
+                                        Padding="6,2"
+                                        VerticalAlignment="Center"
+                                        Command="{Binding OpenMicrophoneSettingsCommand}"
+                                        Style="{StaticResource SecondaryButton}"
+                                        ToolTip="Windows mikrofon ayarlarını aç (Dinle ve seviye)">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock FontFamily="{StaticResource IconFont}"
+                                                   FontSize="10"
+                                                   Margin="0,0,4,0"
+                                                   VerticalAlignment="Center"
+                                                   Text="&#xE713;" />
+                                        <TextBlock FontSize="10"
+                                                   VerticalAlignment="Center"
+                                                   Text="Ayarlar" />
+                                    </StackPanel>
+                                </Button>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <!-- Ses kütüphanesi -->
+        <Border Grid.Row="2" Padding="24,18,14,10">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0" Margin="0,0,10,15">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                        <TextBlock FontSize="17" FontWeight="SemiBold" Text="Sesler" />
+                        <Border Margin="10,0,0,0"
+                                Padding="8,3"
+                                Background="{StaticResource SurfaceAltBrush}"
+                                CornerRadius="6">
+                            <TextBlock FontSize="10"
+                                       FontWeight="SemiBold"
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       Text="{Binding CountDisplay, StringFormat={}{0} ses}" />
+                        </Border>
+                        <TextBlock Margin="12,0,0,0"
+                                   VerticalAlignment="Center"
+                                   FontSize="10"
+                                   Foreground="{StaticResource TextMutedBrush}"
+                                   Text="Karta tıkla: çal  •  Sağ tık: seçenekler" />
+                    </StackPanel>
+
+                    <Grid Grid.Column="1" Width="310" Height="38">
+                        <TextBox x:Name="SearchBox"
+                                 Style="{StaticResource SearchBox}"
+                                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                                 ToolTip="Ses adı veya dosya adıyla ara (Ctrl+F)" />
+                        <TextBlock Margin="11,0,0,0"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Center"
+                                   FontFamily="{StaticResource IconFont}"
+                                   FontSize="13"
+                                   Foreground="{StaticResource TextMutedBrush}"
+                                   IsHitTestVisible="False"
+                                   Text="&#xE721;" />
+                        <TextBlock Margin="34,0,32,0"
+                                   VerticalAlignment="Center"
+                                   FontSize="12"
+                                   Foreground="{StaticResource TextMutedBrush}"
+                                   IsHitTestVisible="False"
+                                   Text="Ses ara...">
+                            <TextBlock.Style>
+                                <Style TargetType="{x:Type TextBlock}">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding SearchText}" Value="" />
+                                                <Condition Binding="{Binding IsKeyboardFocusWithin, ElementName=SearchBox}" Value="False" />
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </MultiDataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <Button Margin="0,0,7,0"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                Command="{Binding ClearSearchCommand}"
+                                Content="&#x2715;"
+                                Style="{StaticResource SearchClearButton}"
+                                ToolTip="Aramayı temizle"
+                                Visibility="{Binding IsSearchActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    </Grid>
+                </Grid>
+
+                <Grid Grid.Row="1">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled"
+                                  CanContentScroll="False"
+                                  PanningMode="VerticalOnly">
+                        <ItemsControl ItemsSource="{Binding SoundsView}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Width="228"
+                                            Height="158"
+                                            Margin="0,0,14,14"
+                                            BorderThickness="1"
+                                            CornerRadius="12"
+                                            Cursor="Hand"
+                                            MouseLeftButtonUp="SoundCard_MouseLeftButtonUp">
+                                        <Border.Style>
+                                            <Style TargetType="{x:Type Border}">
+                                                <Setter Property="Background" Value="{StaticResource CardBrush}" />
+                                                <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+                                                <Setter Property="Opacity" Value="1" />
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="{StaticResource CardHoverBrush}" />
+                                                        <Setter Property="BorderBrush" Value="{StaticResource BorderStrongBrush}" />
+                                                    </Trigger>
+                                                    <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+                                                        <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                                                        <Setter Property="Background" Value="{StaticResource CardHoverBrush}" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding IsAvailable}" Value="False">
+                                                        <Setter Property="Opacity" Value="0.55" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+
+                                        <Border.ContextMenu>
+                                            <ContextMenu Opened="SoundContextMenu_Opened"
+                                                         DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                                                <MenuItem Click="PlaySoundMenu_Click" Header="Çal" />
+                                                <MenuItem Click="StopSoundMenu_Click" Header="Durdur" />
+                                                <Separator />
+                                                <MenuItem Click="EditSoundMenu_Click" Header="Düzenle &amp; Kırp..." />
+                                                <MenuItem Click="EditHotkeyMenu_Click" Header="Kısayol Ata..." />
+                                                <Separator />
+                                                <MenuItem Click="RemoveSoundMenu_Click" Header="Listeden kaldır" />
+                                            </ContextMenu>
+                                        </Border.ContextMenu>
+
+                                        <Border.ToolTip>
+                                            <ToolTip>
+                                                <StackPanel MaxWidth="500">
+                                                    <TextBlock FontWeight="SemiBold" Text="{Binding Name}" />
+                                                    <TextBlock Margin="0,4,0,0"
+                                                               FontSize="11"
+                                                               Foreground="{StaticResource TextSecondaryBrush}"
+                                                               Text="{Binding FilePath}"
+                                                               TextWrapping="Wrap" />
+                                                    <TextBlock Margin="0,4,0,0"
+                                                               FontSize="10"
+                                                               Foreground="{StaticResource AccentHoverBrush}"
+                                                               Text="{Binding TrimToolTip}"
+                                                               Visibility="{Binding HasTrim, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                    <TextBlock Margin="0,5,0,0"
+                                                               FontSize="10"
+                                                               Foreground="{StaticResource TextMutedBrush}"
+                                                               Text="Sol tık: çal • Sağ tık: seçenekler" />
+                                                </StackPanel>
+                                            </ToolTip>
+                                        </Border.ToolTip>
+
+                                        <Grid Margin="14,13,14,12">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="*" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+
+                                            <Grid Grid.Row="0">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <Border Width="36"
+                                                        Height="36"
+                                                        Background="{StaticResource AccentSoftBrush}"
+                                                        CornerRadius="9">
+                                                    <TextBlock HorizontalAlignment="Center"
+                                                               VerticalAlignment="Center"
+                                                               FontFamily="{StaticResource IconFont}"
+                                                               FontSize="15"
+                                                               Foreground="{StaticResource AccentHoverBrush}"
+                                                               Text="&#xE8D6;" />
+                                                </Border>
+
+                                                <StackPanel Grid.Column="1"
+                                                            Margin="10,0,6,0"
+                                                            VerticalAlignment="Center">
+                                                    <TextBlock FontSize="13.5"
+                                                               FontWeight="SemiBold"
+                                                               Text="{Binding Name}"
+                                                               TextTrimming="CharacterEllipsis"
+                                                               ToolTip="{Binding Name}" />
+                                                    <TextBlock Margin="0,3,0,0"
+                                                               FontSize="9"
+                                                               FontWeight="Bold"
+                                                               Foreground="{StaticResource TextMutedBrush}"
+                                                               Text="{Binding FileType}" />
+                                                </StackPanel>
+
+                                                <Button Grid.Column="2"
+                                                        VerticalAlignment="Top"
+                                                        Click="EditSoundButton_Click"
+                                                        Style="{StaticResource CardIconButton}"
+                                                        ToolTip="Ad, ses seviyesi ve kısayolu düzenle">
+                                                    <TextBlock FontFamily="{StaticResource IconFont}"
+                                                               FontSize="12"
+                                                               Text="&#xE70F;" />
+                                                </Button>
+                                            </Grid>
+
+                                            <Grid Grid.Row="1" Margin="0,7,0,5">
+                                                <Button HorizontalAlignment="Left"
+                                                        VerticalAlignment="Center"
+                                                        Click="EditHotkeyButton_Click"
+                                                        ToolTip="{Binding HotkeyToolTip}">
+                                                    <Button.Style>
+                                                        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource CardHotkeyButton}">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding HasHotkey}" Value="True">
+                                                                    <Setter Property="Background" Value="{StaticResource AccentSoftBrush}" />
+                                                                    <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                                                                    <Setter Property="Foreground" Value="{StaticResource AccentHoverBrush}" />
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding IsSingleKeyHotkey}" Value="True">
+                                                                    <Setter Property="Foreground" Value="{StaticResource WarningBrush}" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Button.Style>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock Margin="0,0,5,0"
+                                                                   VerticalAlignment="Center"
+                                                                   FontFamily="{StaticResource IconFont}"
+                                                                   FontSize="10"
+                                                                   Text="&#xE765;" />
+                                                        <TextBlock MaxWidth="124"
+                                                                   VerticalAlignment="Center"
+                                                                   Text="{Binding HotkeyBadgeText}"
+                                                                   TextTrimming="CharacterEllipsis" />
+                                                        <Ellipse Width="5"
+                                                                 Height="5"
+                                                                 Margin="6,0,0,0"
+                                                                 VerticalAlignment="Center"
+                                                                 Fill="{StaticResource WarningBrush}"
+                                                                 Visibility="{Binding IsSingleKeyHotkey, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                    </StackPanel>
+                                                </Button>
+
+                                                <StackPanel HorizontalAlignment="Right"
+                                                            VerticalAlignment="Center"
+                                                            Orientation="Horizontal">
+                                                    <Ellipse Width="6"
+                                                             Height="6"
+                                                             Margin="0,0,5,0"
+                                                             VerticalAlignment="Center"
+                                                             Fill="{StaticResource SuccessBrush}">
+                                                        <Ellipse.Style>
+                                                            <Style TargetType="{x:Type Ellipse}">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+                                                                        <Setter Property="Visibility" Value="Visible" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Ellipse.Style>
+                                                    </Ellipse>
+                                                    <TextBlock FontSize="9"
+                                                               FontWeight="SemiBold"
+                                                               Foreground="{StaticResource SuccessBrush}"
+                                                               Text="{Binding PlayingLabel}" />
+                                                </StackPanel>
+
+                                                <TextBlock HorizontalAlignment="Right"
+                                                           VerticalAlignment="Center"
+                                                           FontSize="9"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="{StaticResource DangerBrush}"
+                                                           Text="Dosya yok">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="{x:Type TextBlock}">
+                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsAvailable}" Value="False">
+                                                                    <Setter Property="Visibility" Value="Visible" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </Grid>
+
+                                            <Grid Grid.Row="2">
+                                                <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                                                    <TextBlock Margin="0,0,5,0"
+                                                               VerticalAlignment="Center"
+                                                               FontFamily="{StaticResource IconFont}"
+                                                               FontSize="10"
+                                                               Foreground="{StaticResource TextMutedBrush}"
+                                                               Text="&#xE767;" />
+                                                    <TextBlock FontSize="10"
+                                                               Foreground="{StaticResource TextMutedBrush}"
+                                                               Text="{Binding VolumeDisplay}" />
+
+                                                    <!-- Kırpma Rozeti -->
+                                                    <Border Margin="8,0,0,0"
+                                                            Padding="5,2"
+                                                            Background="{StaticResource AccentSoftBrush}"
+                                                            CornerRadius="4"
+                                                            ToolTip="{Binding TrimToolTip}"
+                                                            Visibility="{Binding HasTrim, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Margin="0,0,4,0"
+                                                                       VerticalAlignment="Center"
+                                                                       FontFamily="{StaticResource IconFont}"
+                                                                       FontSize="9"
+                                                                       Foreground="{StaticResource AccentHoverBrush}"
+                                                                       Text="&#xE78B;" />
+                                                            <TextBlock FontSize="9"
+                                                                       FontWeight="SemiBold"
+                                                                       Foreground="{StaticResource AccentHoverBrush}"
+                                                                       Text="{Binding TrimDisplay}" />
+                                                        </StackPanel>
+                                                    </Border>
+                                                </StackPanel>
+
+                                                <Grid HorizontalAlignment="Right">
+                                                    <Button Click="PlaySoundButton_Click"
+                                                            IsEnabled="{Binding IsAvailable}"
+                                                            ToolTip="Sesi çal">
+                                                        <Button.Style>
+                                                            <Style TargetType="{x:Type Button}" BasedOn="{StaticResource CardPlayButton}">
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+                                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Button.Style>
+                                                        <TextBlock FontFamily="{StaticResource IconFont}"
+                                                                   FontSize="11"
+                                                                   Text="&#xE768;" />
+                                                    </Button>
+
+                                                    <Button Click="StopSoundButton_Click"
+                                                            ToolTip="Bu sesi durdur">
+                                                        <Button.Style>
+                                                            <Style TargetType="{x:Type Button}" BasedOn="{StaticResource CardStopButton}">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+                                                                        <Setter Property="Visibility" Value="Visible" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Button.Style>
+                                                        <TextBlock FontFamily="{StaticResource IconFont}"
+                                                                   FontSize="9"
+                                                                   Text="&#xE71A;" />
+                                                    </Button>
+                                                </Grid>
+                                            </Grid>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+
+                    <Border Background="{StaticResource WindowBackgroundBrush}">
+                        <Border.Style>
+                            <Style TargetType="{x:Type Border}">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding FilteredSoundCount}" Value="0">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+
+                        <StackPanel HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    MaxWidth="460">
+                            <Border Width="72"
+                                    Height="72"
+                                    HorizontalAlignment="Center"
+                                    Background="{StaticResource SurfaceAltBrush}"
+                                    BorderBrush="{StaticResource BorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="20">
+                                <TextBlock HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           FontFamily="{StaticResource IconFont}"
+                                           FontSize="29"
+                                           Foreground="{StaticResource TextSecondaryBrush}"
+                                           Text="{Binding EmptyStateIcon}" />
+                            </Border>
+                            <TextBlock Margin="0,20,0,0"
+                                       HorizontalAlignment="Center"
+                                       FontSize="20"
+                                       FontWeight="SemiBold"
+                                       Text="{Binding EmptyStateTitle}" />
+                            <TextBlock Margin="0,8,0,0"
+                                       HorizontalAlignment="Center"
+                                       FontSize="12"
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       Text="{Binding EmptyStateDescription}"
+                                       TextAlignment="Center"
+                                       TextWrapping="Wrap" />
+                            <StackPanel Margin="0,20,0,0"
+                                        HorizontalAlignment="Center"
+                                        Orientation="Horizontal"
+                                        Visibility="{Binding EmptyStateShowsAddActions, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <Button Margin="0,0,10,0"
+                                        Click="AddFiles_Click"
+                                        Content="Dosya Ekle"
+                                        Style="{StaticResource PrimaryButton}" />
+                                <Button Click="ScanFolder_Click"
+                                        Content="Klasör Tara"
+                                        Style="{StaticResource SecondaryButton}" />
+                            </StackPanel>
+                            <Button Margin="0,20,0,0"
+                                    Command="{Binding ClearSearchCommand}"
+                                    Content="Aramayı temizle"
+                                    Style="{StaticResource SecondaryButton}"
+                                    Visibility="{Binding EmptyStateShowsClearSearch, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <!-- Durum çubuğu -->
+        <Border Grid.Row="3"
+                Height="36"
+                Padding="24,0"
+                Background="{StaticResource SurfaceBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="0,1,0,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0"
+                           Margin="0,0,18,0"
+                           VerticalAlignment="Center"
+                           FontSize="10"
+                           Foreground="{StaticResource TextSecondaryBrush}"
+                           Text="{Binding StatusMessage}"
+                           TextTrimming="CharacterEllipsis"
+                           ToolTip="{Binding StatusMessage}" />
+
+                <StackPanel Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal">
+                    <TextBlock Margin="0,0,16,0"
+                               FontSize="10"
+                               Foreground="{StaticResource TextMutedBrush}"
+                               Text="Ctrl+F ara" />
+                    <TextBlock FontSize="10" Foreground="{StaticResource TextMutedBrush}">
+                        <Run Text="{Binding CountDisplay, Mode=OneWay}" />
+                        <Run Text=" ses" />
+                    </TextBlock>
+                    <TextBlock Margin="9,0"
+                               FontSize="10"
+                               Foreground="{StaticResource BorderStrongBrush}"
+                               Text="•" />
+                    <TextBlock FontSize="10" Foreground="{StaticResource TextMutedBrush}">
+                        <Run Text="{Binding PlayingSoundCount, Mode=OneWay}" />
+                        <Run Text=" çalıyor" />
+                    </TextBlock>
+                    <TextBlock Margin="16,0,0,0"
+                               FontSize="10"
+                               Foreground="{StaticResource TextMutedBrush}"
+                               Text="Ayarlar"
+                               ToolTip="{Binding ConfigPath}" />
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

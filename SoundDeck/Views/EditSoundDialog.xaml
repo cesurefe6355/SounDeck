@@ -1,0 +1,330 @@
+<Window x:Class="SoundDeck.Views.EditSoundDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:SoundDeck.Controls"
+        Title="Sesi Düzenle ve Kırp"
+        Width="600"
+        SizeToContent="Height"
+        MinHeight="540"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False"
+        Background="{StaticResource WindowBackgroundBrush}">
+
+    <Window.Resources>
+        <Style x:Key="FieldLabel" TargetType="{x:Type TextBlock}">
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+            <Setter Property="Margin" Value="0,0,0,7" />
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Başlık -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <Border Width="40"
+                    Height="40"
+                    Background="{StaticResource AccentSoftBrush}"
+                    CornerRadius="10">
+                <TextBlock HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontFamily="{StaticResource IconFont}"
+                           FontSize="18"
+                           Foreground="{StaticResource AccentHoverBrush}"
+                           Text="&#xE70F;" />
+            </Border>
+            <StackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                <TextBlock FontSize="18" FontWeight="SemiBold" Text="Sesi Düzenle &amp; Kırp" />
+                <TextBlock Margin="0,2,0,0"
+                           FontSize="11"
+                           Foreground="{StaticResource TextSecondaryBrush}"
+                           Text="Görünen adı, seviyeyi, kısayolu ve dalga formu üzerinden başlangıç-bitişi ayarlayın." />
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Dosya bilgileri -->
+        <Border Grid.Row="1"
+                Margin="0,18,0,0"
+                Padding="12,10"
+                Background="{StaticResource SurfaceAltBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="9">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Border Width="34"
+                        Height="34"
+                        Background="{StaticResource InputBrush}"
+                        CornerRadius="7">
+                    <TextBlock HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               FontFamily="{StaticResource IconFont}"
+                               FontSize="15"
+                               Foreground="{StaticResource TextSecondaryBrush}"
+                               Text="&#xE8D6;" />
+                </Border>
+                <StackPanel Grid.Column="1" Margin="10,0,10,0" VerticalAlignment="Center">
+                    <TextBlock x:Name="FileNameText"
+                               FontSize="12"
+                               FontWeight="SemiBold"
+                               TextTrimming="CharacterEllipsis" />
+                    <TextBlock x:Name="FilePathText"
+                               Margin="0,2,0,0"
+                               FontSize="10"
+                               Foreground="{StaticResource TextMutedBrush}"
+                               TextTrimming="CharacterEllipsis"
+                               ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" />
+                </StackPanel>
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock x:Name="DurationText"
+                               Margin="0,0,10,0"
+                               FontSize="11"
+                               FontWeight="SemiBold"
+                               Foreground="{StaticResource TextMutedBrush}"
+                               VerticalAlignment="Center" />
+                    <Border Padding="7,3"
+                            Background="{StaticResource InputBrush}"
+                            CornerRadius="5">
+                        <TextBlock x:Name="FileTypeText"
+                                   FontSize="9"
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource TextSecondaryBrush}" />
+                    </Border>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- İsim ve Seviye Yan Yana -->
+        <Grid Grid.Row="2" Margin="0,16,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="20" />
+                <ColumnDefinition Width="2*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- İsim -->
+            <StackPanel Grid.Column="0">
+                <TextBlock Style="{StaticResource FieldLabel}" Text="SES ADI" />
+                <TextBox x:Name="NameBox"
+                         MaxLength="80"
+                         ToolTip="Ses kartında görünecek ad" />
+            </StackPanel>
+
+            <!-- Ses Seviyesi -->
+            <StackPanel Grid.Column="2">
+                <Grid>
+                    <TextBlock Style="{StaticResource FieldLabel}" Text="SES SEVİYESİ" />
+                    <TextBlock HorizontalAlignment="Right"
+                               FontSize="12"
+                               FontWeight="SemiBold"
+                               Foreground="{StaticResource AccentHoverBrush}"
+                               Text="{Binding Value, ElementName=VolumeSlider, StringFormat={}{0:0}%}" />
+                </Grid>
+                <Slider x:Name="VolumeSlider"
+                        Minimum="0"
+                        Maximum="100"
+                        TickFrequency="1" />
+            </StackPanel>
+        </Grid>
+
+        <!-- Kısayol -->
+        <StackPanel Grid.Row="3" Margin="0,14,0,0">
+            <TextBlock Style="{StaticResource FieldLabel}" Text="GLOBAL KISAYOL" />
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBox x:Name="HotkeyBox"
+                         IsReadOnly="True"
+                         Style="{StaticResource HotkeyBox}"
+                         PreviewKeyDown="HotkeyBox_PreviewKeyDown"
+                         ToolTip="Kutuyu seçip istediğiniz tuş kombinasyonuna basın" />
+                <Button Grid.Column="1"
+                        Width="92"
+                        Margin="8,0,0,0"
+                        Padding="10,8"
+                        Click="ClearHotkey_Click"
+                        Content="Temizle"
+                        Style="{StaticResource SecondaryButton}" />
+            </Grid>
+            <TextBlock Margin="0,5,0,0"
+                       FontSize="10"
+                       Foreground="{StaticResource TextMutedBrush}"
+                       Text="Tek tuş (1, A, F1...) veya Ctrl / Alt / Shift / Win kombinasyonu atayabilirsiniz." />
+
+            <TextBlock x:Name="SingleKeyWarning"
+                       Margin="0,6,0,0"
+                       FontSize="10"
+                       Foreground="{StaticResource WarningBrush}"
+                       Text="Tek tuş kısayolları sistem genelinde ve SoundDeck ön plandayken de çalışır."
+                       TextWrapping="Wrap"
+                       Visibility="Collapsed" />
+        </StackPanel>
+
+        <!-- Görsel Dalga Formu ve Kırpma Alanı (Kullanıcının İstediği Arayüz) -->
+        <Border Grid.Row="4"
+                Margin="0,16,0,0"
+                Padding="16,14"
+                Background="{StaticResource SurfaceAltBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="10">
+            <StackPanel>
+                <Grid Margin="0,0,0,10">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock FontFamily="{StaticResource IconFont}"
+                                   FontSize="13"
+                                   Foreground="{StaticResource AccentHoverBrush}"
+                                   VerticalAlignment="Center"
+                                   Text="&#xE78B;" />
+                        <TextBlock Margin="8,0,0,0"
+                                   Style="{StaticResource FieldLabel}"
+                                   VerticalAlignment="Center"
+                                   Text="SES DALGA FORMU &amp; KIRPMA (BAŞLANGIÇ - BİTİŞ)" />
+                    </StackPanel>
+                    <TextBlock x:Name="TrimSummaryText"
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Center"
+                               FontSize="11"
+                               FontWeight="SemiBold"
+                               Foreground="{StaticResource AccentHoverBrush}"
+                               Text="00:00.0 - 00:00.0 (Tamamı)" />
+                </Grid>
+
+                <!-- Özel Dalga Formu Kırpıcı Kontrolü -->
+                <controls:WaveformTrimmerControl x:Name="WaveformTrimmer" />
+
+                <!-- Hassas Süre Girişleri ve Butonlar -->
+                <Grid Margin="0,10,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Başlangıç ve Bitiş Kutuları -->
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock VerticalAlignment="Center"
+                                   FontSize="11"
+                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                   Text="Başlangıç:" />
+                        <TextBox x:Name="StartTimeBox"
+                                 Width="68"
+                                 Height="27"
+                                 Margin="6,0,0,0"
+                                 FontSize="11"
+                                 Padding="4,2"
+                                 TextAlignment="Center"
+                                 LostFocus="StartTimeBox_LostFocus"
+                                 KeyDown="StartTimeBox_KeyDown"
+                                 ToolTip="Başlangıç zamanı (ör: 00:05.20 veya saniye)" />
+                        <Button Margin="4,0,14,0"
+                                Height="27"
+                                Padding="8,0"
+                                Click="SetStartZero_Click"
+                                Content="0:00"
+                                FontSize="10"
+                                Style="{StaticResource SecondaryButton}"
+                                ToolTip="Başlangıcı en başa al" />
+
+                        <TextBlock VerticalAlignment="Center"
+                                   FontSize="11"
+                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                   Text="Bitiş:" />
+                        <TextBox x:Name="EndTimeBox"
+                                 Width="68"
+                                 Height="27"
+                                 Margin="6,0,0,0"
+                                 FontSize="11"
+                                 Padding="4,2"
+                                 TextAlignment="Center"
+                                 LostFocus="EndTimeBox_LostFocus"
+                                 KeyDown="EndTimeBox_KeyDown"
+                                 ToolTip="Bitiş zamanı (ör: 00:32.25 veya saniye)" />
+                        <Button Margin="4,0,0,0"
+                                Height="27"
+                                Padding="8,0"
+                                Click="SetEndMax_Click"
+                                Content="Son"
+                                FontSize="10"
+                                Style="{StaticResource SecondaryButton}"
+                                ToolTip="Bitişi dosyanın sonuna al" />
+                    </StackPanel>
+
+                    <!-- Sağ Taraf: Sıfırla ve Sesi Kes & Kaydet -->
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Button Margin="0,0,8,0"
+                                Height="27"
+                                Padding="10,0"
+                                Click="ResetTrim_Click"
+                                Style="{StaticResource SecondaryButton}"
+                                ToolTip="Aralığı tüm dosyayı kapsayacak şekilde sıfırla">
+                            <TextBlock FontSize="11" Text="Sıfırla" />
+                        </Button>
+                        <Button Height="27"
+                                Padding="12,0"
+                                Click="TrimAndExport_Click"
+                                Style="{StaticResource SecondaryButton}"
+                                ToolTip="Seçili aralığı yeni bir ses dosyası (.wav) olarak kesip dışa aktar">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock FontFamily="{StaticResource IconFont}"
+                                           FontSize="11"
+                                           Margin="0,0,6,0"
+                                           VerticalAlignment="Center"
+                                           Foreground="{StaticResource AccentHoverBrush}"
+                                           Text="&#xE78B;" />
+                                <TextBlock FontSize="11"
+                                           VerticalAlignment="Center"
+                                           Text="Sesi Kes ve Kaydet..." />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <!-- Hata Mesajı -->
+        <TextBlock x:Name="ErrorText"
+                   Grid.Row="5"
+                   Margin="0,10,0,0"
+                   FontSize="11"
+                   Foreground="{StaticResource DangerBrush}"
+                   TextWrapping="Wrap"
+                   Visibility="Collapsed" />
+
+        <!-- Alt butonlar -->
+        <StackPanel Grid.Row="6"
+                    Margin="0,18,0,0"
+                    HorizontalAlignment="Right"
+                    Orientation="Horizontal">
+            <Button Width="96"
+                    Margin="0,0,10,0"
+                    Click="Cancel_Click"
+                    Content="İptal"
+                    IsCancel="True"
+                    Style="{StaticResource SecondaryButton}" />
+            <Button Width="108"
+                    Click="Save_Click"
+                    Content="Kaydet"
+                    IsDefault="True"
+                    Style="{StaticResource PrimaryButton}" />
+        </StackPanel>
+    </Grid>
+</Window>

@@ -1,7 +1,7 @@
 <div align="center">
 
 <!-- HEADER SVG – GitHub'da filter/linearGradient çalışmaz, düz renk kullanıyoruz -->
-<svg xmlns="http://www.w3.org/2000/svg" width="900" height="220" viewBox="0 0 900 220">
+<svg xmlns="[http://www.w3.org/2000/svg](https://ishan-res.vercel.app/svg/banner/dev/cesurefe6355)" width="900" height="220" viewBox="0 0 900 220">
   <!-- Arka plan -->
   <rect width="900" height="220" fill="#0d1117"/>
 
